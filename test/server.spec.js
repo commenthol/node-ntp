@@ -22,7 +22,7 @@ describe('Server', function () {
     Ntp.Client({ server, port }, (err, response) => {
       assert.ok(!err, err && err.message)
       assert.strictEqual(response.mode, 4)
-      assert.strictEqual(response.stratum, 0)
+      assert.strictEqual(response.stratum, 1)
       assert.strictEqual(response.referenceIdentifier, 'NODE')
       assert.ok(response.roundTripDelay < 10)
       assert.ok(response.systemClockOffset < 10)

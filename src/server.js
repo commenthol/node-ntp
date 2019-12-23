@@ -7,7 +7,7 @@ const utils = require('./utils.js')
 
 const DEFAULT = {
   port: 123,
-  stratum: 0,
+  stratum: 1,
   referenceIdentifier: 'NODE'
 }
 
