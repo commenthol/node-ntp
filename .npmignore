@@ -4,11 +4,16 @@ logs
 **/*.backup.*
 **/*.back.*
 
-node_modules
-bower_componets
+node_modules/
+bower_componets/
 
 *.sublime*
 
 psd
 thumb
 sketch
+
+coverage/
+.nyc_output/
+
+.*
