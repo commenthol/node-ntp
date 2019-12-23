@@ -1,5 +1,5 @@
 const assert = require('assert')
-const Packet = require('../packet.js')
+const Packet = require('../src/packet.js')
 
 describe('Packet', function () {
   it('shall throw if packet length is less than 48 bytes', function () {
@@ -14,7 +14,7 @@ describe('Packet', function () {
   })
 
   it('shall parse packet', function () {
-    const buffer = Buffer.from('JAIGgQAAABsAAAC+gUaCR+GrGxCgwyLR4asbThO2RaLhqxtOKN9T+OGrG04o4m6Y', 'base64')
+    const buffer = Buffer.from('JAIG/wAAABsAAAC+gUaCR+GrGxCgwyLR4asbThO2RaLhqxtOKN9T+OGrG04o4m6Y', 'base64')
     const message = Packet.parse(buffer)
     assert.deepStrictEqual(message, new Packet({
       leapIndicator: 0,
@@ -46,7 +46,7 @@ describe('Packet', function () {
     const buffer = packet.toBuffer()
     assert.strictEqual(
       buffer.toString('base64'),
-      'YwEGgQAAAAAAAAAAVGVzdIOqfoAAAAAAg6p+gAAAAACDqn6AAAAAAOGrxa4FHrhS'
+      'YwEG/wAAAAAAAAAAVGVzdIOqfoAAAAAAg6p+gAAAAACDqn6AAAAAAOGrxa4FHrhS'
     )
 
     const message = Packet.parse(buffer)

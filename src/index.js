@@ -26,7 +26,6 @@ function Ntp (options, callback) {
     port: 123
   }, options)
 
-  this.socket = udp.createSocket('udp4')
   if (typeof callback === 'function') {
     this.time(callback)
   }
@@ -43,12 +42,26 @@ util.inherits(Ntp, EventEmitter)
 Ntp.prototype.time = function (callback) {
   const { server, port } = this
   const packet = Ntp.createPacket()
-  this.socket.send(packet, 0, packet.length, port, server, err => {
-    if (err) return callback(err)
-    this.socket.once('message', data => {
-      this.socket.close()
-      const message = Ntp.parse(data)
-      callback(err, message)
+  const socket = udp.createSocket('udp4')
+  socket.connect(port, server, (err) => {
+    if (err) {
+      callback(err)
+      return
+    }
+    socket.send(packet, 0, packet.length, err => {
+      if (err) {
+        callback(err)
+        return
+      }
+      socket.once('message', data => {
+        socket.close()
+        try {
+          const message = Ntp.parse(data) // may throw
+          callback(err, message)
+        } catch (e) {
+          callback(e)
+        }
+      })
     })
   })
   return this

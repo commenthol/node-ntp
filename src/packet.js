@@ -1,37 +1,4 @@
-/**
- * 1900 ~ 1970
- * @docs https://tools.ietf.org/html/rfc4330#section-3
- */
-const SEVENTY_YEARS = 2208988800
-
-/** converts byte to signed integer */
-const byteToInt = (val) => (val && 0x7f) * (val & 0x80 ? -1 : 1)
-
-/**
- * converts from NTP Short Format
- * @see https://tools.ietf.org/html/rfc5905#section-6
- */
-const shortFormatToFloat = (buf) => {
-  const sign = buf[0] & 0x80 ? -1 : 1
-  const int = ((buf[0] & 0x7f) << 8) + buf[1]
-  const frac = ((buf[2] << 8) + buf[3]) / Math.pow(2, 16)
-  return sign * (int + frac)
-}
-
-/**
- * reverse conversion of float to NTP Short Format
- */
-const floatToShortFormat = (buffer, offset, val) => {
-  const seconds = Math.floor(val)
-  const fraction = Math.round((val - seconds) * Math.pow(2, 16))
-  // seconds
-  buffer[offset + 0] = (seconds & 0x0000FF00) >> 8
-  buffer[offset + 1] = (seconds & 0x000000FF)
-  // fraction
-  buffer[offset + 2] = (fraction & 0x0000FF00) >> 8
-  buffer[offset + 3] = (fraction & 0x000000FF)
-  return buffer
-}
+const utils = require('./utils.js')
 
 /** converts Reference Identifier based on stratum */
 const toRefIdentifier = (buf, stratum) => {
@@ -45,43 +12,6 @@ const toRefIdentifier = (buf, stratum) => {
     // or four-octet IPv4 address
     return buf.toString('hex')
   }
-}
-
-/**
- * converts from NTP Timestamp Format
- * @see https://tools.ietf.org/html/rfc5905#section-6
- */
-function toMsecs (buffer, offset) {
-  let seconds = 0
-  let fraction = 0
-  for (let i = 0; i < 4; ++i) {
-    seconds = (seconds * 256) + buffer[offset + i]
-  }
-  for (let i = 4; i < 8; ++i) {
-    fraction = (fraction * 256) + buffer[offset + i]
-  }
-  return ((seconds - SEVENTY_YEARS + (fraction / Math.pow(2, 32))) * 1000)
-}
-
-/**
- * converts to NTP Timestamp Format
- * @see https://tools.ietf.org/html/rfc5905#section-6
- */
-function writeMsecs (buffer, offset, ts) {
-  // const buffer = Buffer.alloc(8); // 64bits
-  const seconds = Math.floor(ts / 1000) + SEVENTY_YEARS
-  const fraction = Math.round((ts % 1000) / 1000 * Math.pow(2, 32))
-  // seconds
-  buffer[offset + 0] = (seconds & 0xFF000000) >> 24
-  buffer[offset + 1] = (seconds & 0x00FF0000) >> 16
-  buffer[offset + 2] = (seconds & 0x0000FF00) >> 8
-  buffer[offset + 3] = (seconds & 0x000000FF)
-  // fraction
-  buffer[offset + 4] = (fraction & 0xFF000000) >> 24
-  buffer[offset + 5] = (fraction & 0x00FF0000) >> 16
-  buffer[offset + 6] = (fraction & 0x0000FF00) >> 8
-  buffer[offset + 7] = (fraction & 0x000000FF)
-  return buffer
 }
 
 const optionalBuffer = (buf) => (buf && buf.length) ? buf : undefined
@@ -153,14 +83,14 @@ class Packet {
     packet.mode = (buffer[0] & 0x7)
     packet.stratum = buffer[1]
     packet.pollInterval = buffer[2]
-    packet.precision = byteToInt(buffer[3])
-    packet.rootDelay = shortFormatToFloat(buffer.slice(4, 8))
-    packet.rootDispersion = shortFormatToFloat(buffer.slice(8, 12))
+    packet.precision = utils.byteToInt(buffer[3])
+    packet.rootDelay = utils.ntpShortToSecs(buffer, 4)
+    packet.rootDispersion = utils.ntpShortToSecs(buffer, 8)
     packet.referenceIdentifier = toRefIdentifier(buffer.slice(12, 16), packet.stratum)
-    packet.referenceTimestamp = toMsecs(buffer, 16)
-    packet.originateTimestamp = toMsecs(buffer, 24)
-    packet.receiveTimestamp = toMsecs(buffer, 32)
-    packet.transmitTimestamp = toMsecs(buffer, 40)
+    packet.referenceTimestamp = utils.ntpTimestampToSecs(buffer, 16)
+    packet.originateTimestamp = utils.ntpTimestampToSecs(buffer, 24)
+    packet.receiveTimestamp = utils.ntpTimestampToSecs(buffer, 32)
+    packet.transmitTimestamp = utils.ntpTimestampToSecs(buffer, 40)
     // optional
     packet.keyIdentifier = optionalBuffer(buffer.slice(48, 52))
     packet.messageDigest = optionalBuffer(buffer.slice(52, 68))
@@ -206,14 +136,14 @@ class Packet {
     buffer[0] += this.mode << 0
     buffer[1] = this.stratum
     buffer[2] = this.pollInterval
-    buffer[3] = this.precision
-    floatToShortFormat(buffer, 4, this.rootDelay)
-    floatToShortFormat(buffer, 8, this.rootDispersion)
+    buffer[3] = utils.intToByte(this.precision)
+    utils.secsToNtpShort(this.rootDelay, buffer, 4)
+    utils.secsToNtpShort(this.rootDispersion, buffer, 8)
     referenceIdentifier.copy(buffer, 12, 0, 4)
-    writeMsecs(buffer, 16, this.referenceTimestamp)
-    writeMsecs(buffer, 24, this.originateTimestamp)
-    writeMsecs(buffer, 32, this.receiveTimestamp)
-    writeMsecs(buffer, 40, this.transmitTimestamp)
+    utils.secsToNtpTimestamp(this.referenceTimestamp, buffer, 16)
+    utils.secsToNtpTimestamp(this.originateTimestamp, buffer, 24)
+    utils.secsToNtpTimestamp(this.receiveTimestamp, buffer, 32)
+    utils.secsToNtpTimestamp(this.transmitTimestamp, buffer, 40)
     return buffer
   }
 

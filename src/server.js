@@ -2,7 +2,8 @@
 
 const udp = require('dgram')
 const EventEmitter = require('events')
-const Packet = require('./packet')
+const Packet = require('./packet.js')
+const utils = require('./utils.js')
 
 const DEFAULT = {
   port: 123,
@@ -11,6 +12,12 @@ const DEFAULT = {
 }
 
 class NtpServer extends EventEmitter {
+  /**
+   * @param {object} [options]
+   * @param {number} [options.port=123]
+   * @param {number} [options.stratum=0]
+   * @param {string|Buffer} [options.referenceIdentifier='NODE']
+   */
   constructor (options, onRequest) {
     super()
 
@@ -21,6 +28,7 @@ class NtpServer extends EventEmitter {
 
     Object.assign(this, DEFAULT, options)
 
+    this.precision = utils.precision()
     this.socket = udp.createSocket('udp4')
     this.socket.on('message', this.parse.bind(this))
 
@@ -29,6 +37,10 @@ class NtpServer extends EventEmitter {
   }
 
   listen (port, address, callback) {
+    if (typeof address === 'function') {
+      callback = address
+      address = undefined
+    }
     this.socket.bind(port || this.port, address, callback)
     return this
   }
@@ -52,11 +64,20 @@ class NtpServer extends EventEmitter {
     return this
   }
 
+  /**
+   * parses ntp packet `message` and emits `request` event
+   * @param {Buffer} message - NTP packet
+   * @param {object} rinfo
+   * @param {string} rinfo.server
+   * @param {number} rinfo.port
+   * @return self
+   */
   parse (message, rinfo) {
     const receiveTimestamp = Date.now()
     const packet = Packet.parse(message)
-    packet.stratum = this.stratum
-    packet.referenceIdentifier = this.referenceIdentifier
+    ;['stratum', 'precision', 'referenceIdentifier'].forEach(key => {
+      packet[key] = this[key]
+    })
     packet.originateTimestamp = packet.transmitTimestamp
     packet.receiveTimestamp = receiveTimestamp
     this.emit('request', packet, this.send.bind(this, rinfo))
