@@ -1,6 +1,6 @@
 {
   "name": "ntp2",
-  "version": "0.0.2",
+  "version": "1.0.0-0",
   "description": "simple network time protocol implementation for node.js",
   "keywords": [
     "date",
@@ -17,8 +17,11 @@
   },
   "license": "MIT",
   "author": "Lsong <song940@gmail.com>",
+  "contributors": [
+    "commenthol <commenthol@gmail.com>"
+  ],
   "main": "index.js",
-  "types": "./types/index.d.ts",
+  "typings": "types",
   "directories": {
     "example": "example",
     "test": "test"
@@ -28,9 +31,13 @@
     "lint": "eslint --fix \"**/*.js\"",
     "prepublishOnly": "npm run all",
     "start": "node server.js",
-    "test": "nyc -r text -r html mocha"
+    "test": "npm run test:ci && npm run test:ts",
+    "test:ci": "nyc -r text -r html mocha",
+    "test:ts": "dtslint types"
   },
   "devDependencies": {
+    "@types/node": "^13.1.0",
+    "dtslint": "^2.0.2",
     "eslint": "^6.8.0",
     "eslint-config-standard": "^14.1.0",
     "eslint-plugin-import": "^2.19.1",
