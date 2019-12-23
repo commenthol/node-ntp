@@ -43,6 +43,31 @@ const assert = require('assert');
  */
 const SEVENTY_YEARS = 2208988800;
 
+/** converts byte to signed integer */
+const byteToInt = (val) => (val && 0x7f) * (val & 0x80 ? -1 : 1)
+
+/** converts 32byte to float value */
+const toFloat = (buf) => {
+  const sign = buf[0] & 0x80 ? -1 : 1
+  const int = ((buf[0] & 0x7f) << 8) + buf[1]
+  const frac = ((buf[2] << 8) + buf[3]) / Math.pow(2, 16)
+  return sign * (int + frac)
+}
+
+/** converts Reference Identifier based on stratum */
+const toRefIdentifier = (buf, stratum) => {
+  if (stratum <= 1) {
+    return buf.reduce((id, val) => {
+      if (val) id += String.fromCharCode(val)
+      return id
+    }, '')
+  } else {
+    // first four octets of the MD5 hash of the IPv6 address
+    // or four-octet IPv4 address
+    return buf.toString('hex')
+  }
+}
+
 /**
  * @rfc https://tools.ietf.org/html/rfc4330
  */
@@ -70,10 +95,11 @@ class Packet {
     packet.mode                = (buffer[0] & 0x7);
     packet.stratum             = buffer[1];
     packet.pollInterval        = buffer[2];
-    packet.precision           = buffer[3];
-    packet.rootDelay           = buffer.slice(4, 8);
-    packet.rootDispersion      = buffer.slice(8, 12);
-    packet.referenceIdentifier = buffer.slice(12, 16);
+    packet.pollIntervalSecs    = Math.pow(2, packet.pollInterval);
+    packet.precision           = byteToInt(buffer[3]);
+    packet.rootDelay           = toFloat(buffer.slice(4, 8));
+    packet.rootDispersion      = toFloat(buffer.slice(8, 12));
+    packet.referenceIdentifier = toRefIdentifier(buffer.slice(12, 16), packet.stratum);
     packet.referenceTimestamp  = toMsecs(buffer, 16);
     packet.originateTimestamp  = toMsecs(buffer, 24);
     packet.receiveTimestamp    = toMsecs(buffer, 32);
@@ -187,6 +213,6 @@ function writeMsecs(buffer, offset, ts){
 Packet.MODES = {
   CLIENT: 3,
   SERVER: 4,
-};;
+}
 
 module.exports = Packet;

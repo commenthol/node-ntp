@@ -94,10 +94,10 @@ NTP.parse = function (buffer) {
   const T3 = message.transmitTimestamp;
   const T4 = message.destinationTimestamp;
   // The roundtrip delay d and system clock offset t are defined as:
-  // -
-  // d = (T4 - T1) - (T3 - T2)     t = ((T2 - T1) + (T3 - T4)) / 2
-  message.d = (T4 - T1) - (T3 - T2);
-  message.t = ((T2 - T1) + (T3 - T4)) / 2;
+  // roundTripDelay = d = (T4 - T1) - (T3 - T2)     
+  // systemClockOffset = t = ((T2 - T1) + (T3 - T4)) / 2
+  message.roundTripDelay = (T4 - T1) - (T3 - T2);
+  message.systemClockOffset = ((T2 - T1) + (T3 - T4)) / 2;
   return message;
 };
 
