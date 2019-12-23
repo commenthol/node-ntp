@@ -16,7 +16,7 @@ $ npm i ntp2
 ```js
 const ntp = require('ntp2');
 
-ntp.time(function(err, response){
+ntp.time((err, response) => {
   console.log('The network time is :', response.time);
 });
 ```
@@ -26,11 +26,10 @@ sntp server
 ```js
 const ntp = require('ntp2');
 
-const server = ntp.createServer(function(message, response){
+const server = ntp.createServer((message, response) => {
   console.log('server message:', message);
-  message.transmitTimestamp = Date.now();
   response(message);
-}).listen(123, function(err){
+}).listen(123, (err) => {
   console.log('server is running at %s', server.address().port);
 });
 ```
@@ -43,10 +42,10 @@ const server = ntp.createServer(function(message, response){
 
 ### SPEC
 
-+ https://tools.ietf.org/html/rfc2030
-+ https://tools.ietf.org/html/rfc4330
+- https://tools.ietf.org/html/rfc5905
 
 ### Contributing
+
 - Fork this Repo first
 - Clone your Repo
 - Install dependencies by `$ npm install`
@@ -57,6 +56,7 @@ const server = ntp.createServer(function(message, response){
 - Enjoy hacking <3
 
 ### MIT license
+
 Copyright (c) 2016 Lsong &lt;song940@gmail.com&gt;
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
