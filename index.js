@@ -63,7 +63,7 @@ NTP.prototype.time = function (callback) {
 NTP.createPacket = function () {
   const packet = new Packet();
   packet.mode = Packet.MODES.CLIENT;
-  packet.originateTimestamp = Date.now();
+  packet.transmitTimestamp = Date.now();
   return packet.toBuffer();
 };
 
