@@ -1,5 +1,6 @@
 .DS_*
 *.log
+*.tgz
 logs
 **/*.backup.*
 **/*.back.*
@@ -15,5 +16,9 @@ sketch
 
 coverage/
 .nyc_output/
+test/
+example/
+types/*
+!types/index.d.ts
 
 .*
