@@ -40,6 +40,32 @@ const server = ntp.createServer((message, response) => {
 - ntp2.Client()
 - ntp2.createServer()
 
+### CLI
+
+```
+bin/ntp2cli.js ch.pool.ntp.org
+{
+  "leapIndicator": "no-warning",
+  "version": 4,
+  "mode": "server",
+  "stratum": "primary",
+  "pollInterval": 6,
+  "precision": -107,
+  "rootDelay": 0,
+  "rootDispersion": 0.0010833740234375,
+  "referenceIdentifier": "PPS",
+  "referenceTimestamp": "2019-12-23T13:41:42.199Z",
+  "originateTimestamp": "2019-12-23T13:41:49.082Z",
+  "receiveTimestamp": "2019-12-23T13:41:49.156Z",
+  "transmitTimestamp": "2019-12-23T13:41:49.156Z",
+  "destinationTimestamp": "2019-12-23T13:41:49.172Z",
+  "pollIntervalSecs": 64,
+  "time": "2019-12-23T13:41:49.156Z",
+  "roundTripDelay": 89.940185546875,
+  "systemClockOffset": 29.5443115234375
+}
+```
+
 ### SPEC
 
 - https://tools.ietf.org/html/rfc5905
