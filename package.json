@@ -7,13 +7,13 @@
     "ntp",
     "time"
   ],
-  "homepage": "https://github.com/song940/node-ntp#readme",
+  "homepage": "https://github.com/commenthol/node-ntp#readme",
   "bugs": {
-    "url": "https://github.com/song940/node-ntp/issues"
+    "url": "https://github.com/commenthol/node-ntp/issues"
   },
   "repository": {
     "type": "git",
-    "url": "git+ssh://git@github.com/song940/node-ntp.git"
+    "url": "git+ssh://git@github.com/commenthol/node-ntp.git"
   },
   "license": "MIT",
   "author": "Lsong <song940@gmail.com>",
