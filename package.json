@@ -2,29 +2,42 @@
   "name": "ntp2",
   "version": "0.0.2",
   "description": "simple network time protocol implementation for node.js",
-  "main": "index.js",
-  "types": "./types/index.d.ts",
-  "repository": {
-    "url": "git+ssh://git@github.com/song940/node-ntp.git",
-    "type": "git"
-  },
-  "author": "Lsong <song940@gmail.com>",
-  "license": "MIT",
-  "scripts": {
-    "start": "node server.js",
-    "test": "node test"
-  },
+  "keywords": [
+    "date",
+    "ntp",
+    "time"
+  ],
+  "homepage": "https://github.com/song940/node-ntp#readme",
   "bugs": {
     "url": "https://github.com/song940/node-ntp/issues"
   },
-  "homepage": "https://github.com/song940/node-ntp#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/song940/node-ntp.git"
+  },
+  "license": "MIT",
+  "author": "Lsong <song940@gmail.com>",
+  "main": "index.js",
+  "types": "./types/index.d.ts",
   "directories": {
     "example": "example",
     "test": "test"
   },
-  "keywords": [
-    "ntp",
-    "time",
-    "date"
-  ]
+  "scripts": {
+    "all": "npm run lint && npm test",
+    "lint": "eslint --fix \"**/*.js\"",
+    "prepublishOnly": "npm run all",
+    "start": "node server.js",
+    "test": "nyc -r text -r html mocha"
+  },
+  "devDependencies": {
+    "eslint": "^6.8.0",
+    "eslint-config-standard": "^14.1.0",
+    "eslint-plugin-import": "^2.19.1",
+    "eslint-plugin-node": "^10.0.0",
+    "eslint-plugin-promise": "^4.2.1",
+    "eslint-plugin-standard": "^4.0.1",
+    "mocha": "^6.2.2",
+    "nyc": "^15.0.0"
+  }
 }
