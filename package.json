@@ -1,5 +1,5 @@
 {
-  "name": "ntp2",
+  "name": "@commenthol/ntp2",
   "version": "1.0.0",
   "description": "simple network time protocol implementation for node.js",
   "keywords": [
@@ -20,11 +20,11 @@
   "contributors": [
     "commenthol <commenthol@gmail.com>"
   ],
+  "main": "src/index.js",
+  "typings": "types",
   "bin": {
     "ntp2cli": "./bin/ntp2cli.js"
   },
-  "main": "src/index.js",
-  "typings": "types",
   "directories": {
     "example": "example",
     "test": "test"
@@ -49,5 +49,8 @@
     "eslint-plugin-standard": "^4.0.1",
     "mocha": "^6.2.2",
     "nyc": "^15.0.0"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }

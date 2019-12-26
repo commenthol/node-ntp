@@ -1,4 +1,4 @@
-# ntp2
+# @commenthol/ntp2
 
 Simple network time protocol implementation for node.js
 
@@ -13,10 +13,8 @@ This is an improved fork from [ntp2](https://github.com/song940/node-ntp).
 
 ## Installation
 
-This package is not (yet) on npm, so install with...
-
 ```bash
-$ npm i https://github.com/commenthol/node-ntp.git#semver:^1.0.0
+$ npm i @commenthol/ntp2
 ```
 
 ## Example
@@ -24,36 +22,30 @@ $ npm i https://github.com/commenthol/node-ntp.git#semver:^1.0.0
 **Client**
 
 ```js
-const ntp = require('ntp2');
+const ntp = require('@commenthol/ntp2')
 
 ntp.time((err, response) => {
-  console.log('The network time is :', response.time);
+  console.log('The network time is:', response.time)
 });
 ```
 
 **SNTP Server**
 
 ```js
-const ntp = require('ntp2');
+const ntp = require('@commenthol/ntp2')
 
 const server = ntp.createServer((message, response) => {
-  console.log('server message:', message);
-  response(message);
+  console.log('server message:', message)
+  response(message)
 }).listen(123, (err) => {
   console.log('server is running at %s', server.address().port);
-});
+})
 ```
-
-## API
-
-- ntp2.Server()
-- ntp2.Client()
-- ntp2.createServer()
 
 ## CLI
 
 > May require global install with:  
-> `npm i -g https://github.com/commenthol/node-ntp.git#semver:^1.0.0`
+> `npm i -g @commenthol/ntp2`
 
 **Usage**
 
